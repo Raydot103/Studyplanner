@@ -245,36 +245,27 @@ with tab1:
             s = task["subject"]
             subject_time[s] = subject_time.get(s, 0) + task["duration"]
 
-    if subject_time:
-        import matplotlib.pyplot as plt
-        plt.rcParams['axes.unicode_minus'] = False
-        fig, ax = plt.subplots(figsize=(4, 4))
-        fig.patch.set_facecolor(bg)
-        ax.set_facecolor(bg)
-        labels = list(subject_time.keys())
-        sizes = list(subject_time.values())
-        colors = [COLORS.get(s, "#94A3B8") for s in labels]
-        wedges, texts, autotexts = ax.pie(
-            sizes,
-            labels=None,
-            colors=colors,
-            autopct='%1.0f%%',
-            startangle=90,
-            textprops={'color': text, 'fontsize': 11}
-        )
-        for at in autotexts:
-            at.set_color('white')
-        ax.legend(
-            wedges, labels,
-            loc="lower center",
-            bbox_to_anchor=(0.5, -0.15),
-            ncol=3,
-            frameon=False,
-            labelcolor=text,
-            fontsize=10
-        )
-        st.pyplot(fig)
-        plt.close()
+if subject_time:
+        st.markdown("### 과목별 공부 비율")
+        total = sum(subject_time.values())
+        for subj, mins in sorted(subject_time.items(), key=lambda x: -x[1]):
+            color = COLORS.get(subj, "#94A3B8")
+            pct = round(mins / total * 100)
+            st.markdown(f"""
+            <div style="margin: 6px 0;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-size:13px; font-weight:600; color:{text};">
+                        <span style="display:inline-block; width:10px; height:10px;
+                               border-radius:50%; background:{color}; margin-right:6px;"></span>
+                        {subj}
+                    </span>
+                    <span style="font-size:13px; color:{sub};">{mins}분 ({pct}%)</span>
+                </div>
+                <div style="background:{border}; border-radius:100px; height:8px;">
+                    <div style="background:{color}; width:{pct}%; height:8px; border-radius:100px;"></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     else:
         st.markdown(f"""
         <div class="apple-card" style="text-align:center; padding:30px;">
@@ -282,8 +273,6 @@ with tab1:
             <div style="font-size:14px; color:{sub}; margin-top:8px">할 일을 완료하면 과목별 비율이 나와요!</div>
         </div>
         """, unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
     if st.session_state.timer_running and st.session_state.timer_start:
         elapsed = st.session_state.timer_elapsed + (datetime.datetime.now() - st.session_state.timer_start).seconds
