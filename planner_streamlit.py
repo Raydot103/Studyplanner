@@ -111,12 +111,18 @@ h1, h2, h3, h4, h5, p, div, span, label {{
 
 .stButton > button {{
     border-radius: 12px !important;
-    border: none !important;
+    border: 1px solid {border} !important;
     font-weight: 500 !important;
     font-size: 14px !important;
     padding: 10px 20px !important;
     transition: all 0.2s ease !important;
     box-shadow: 0 2px 8px rgba(0,0,0,{'0.3' if mode else '0.1'}) !important;
+    background: {card} !important;
+    color: {text} !important;
+}}
+
+.stButton > button p {{
+    color: {text} !important;
 }}
 
 .stButton > button:hover {{
