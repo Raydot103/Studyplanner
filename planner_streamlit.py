@@ -245,7 +245,7 @@ with tab1:
             s = task["subject"]
             subject_time[s] = subject_time.get(s, 0) + task["duration"]
 
-   if subject_time:
+    if subject_time:
         import matplotlib.pyplot as plt
         plt.rcParams['axes.unicode_minus'] = False
         fig, ax = plt.subplots(figsize=(4, 4))
