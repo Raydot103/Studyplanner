@@ -245,16 +245,34 @@ with tab1:
             s = task["subject"]
             subject_time[s] = subject_time.get(s, 0) + task["duration"]
 
-    if subject_time:
+   if subject_time:
         import matplotlib.pyplot as plt
+        plt.rcParams['axes.unicode_minus'] = False
         fig, ax = plt.subplots(figsize=(4, 4))
         fig.patch.set_facecolor(bg)
         ax.set_facecolor(bg)
         labels = list(subject_time.keys())
         sizes = list(subject_time.values())
         colors = [COLORS.get(s, "#94A3B8") for s in labels]
-        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.0f%%',
-               startangle=90, textprops={'color': text, 'fontsize': 11})
+        wedges, texts, autotexts = ax.pie(
+            sizes,
+            labels=None,
+            colors=colors,
+            autopct='%1.0f%%',
+            startangle=90,
+            textprops={'color': text, 'fontsize': 11}
+        )
+        for at in autotexts:
+            at.set_color('white')
+        ax.legend(
+            wedges, labels,
+            loc="lower center",
+            bbox_to_anchor=(0.5, -0.15),
+            ncol=3,
+            frameon=False,
+            labelcolor=text,
+            fontsize=10
+        )
         st.pyplot(fig)
         plt.close()
     else:
@@ -264,7 +282,6 @@ with tab1:
             <div style="font-size:14px; color:{sub}; margin-top:8px">할 일을 완료하면 과목별 비율이 나와요!</div>
         </div>
         """, unsafe_allow_html=True)
-
     st.markdown("<br>", unsafe_allow_html=True)
     timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
