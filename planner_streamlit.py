@@ -9,27 +9,172 @@ st.set_page_config(
     layout="centered"
 )
 
-st.markdown("""
+# ── 다크/라이트 모드 토글 ─────────────────────────────────
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = True
+
+mode = st.session_state.dark_mode
+
+if mode:
+    bg = "#0f1117"
+    card = "#1e293b"
+    card2 = "#0f172a"
+    text = "#f1f5f9"
+    sub = "#94a3b8"
+    border = "#334155"
+    input_bg = "#1e293b"
+else:
+    bg = "#f5f5f7"
+    card = "#ffffff"
+    card2 = "#f0f0f5"
+    text = "#1d1d1f"
+    sub = "#6e6e73"
+    border = "#d2d2d7"
+    input_bg = "#ffffff"
+
+st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
-* { font-family: 'Noto Sans KR', sans-serif; }
-.perfect-week {
-    background: linear-gradient(135deg, #f59e0b, #ef4444);
-    color: white;
-    padding: 16px;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {{
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}}
+
+.stApp {{
+    background: {bg} !important;
+}}
+
+section[data-testid="stSidebar"] {{
+    background: {card} !important;
+}}
+
+h1, h2, h3, h4, h5, p, div, span, label {{
+    color: {text} !important;
+}}
+
+.apple-card {{
+    background: {card};
+    border-radius: 20px;
+    padding: 20px 24px;
+    margin: 10px 0;
+    box-shadow: 0 2px 20px rgba(0,0,0,{'0.3' if mode else '0.08'});
+    border: 1px solid {border};
+}}
+
+.task-row {{
+    background: {card};
     border-radius: 16px;
+    padding: 14px 18px;
+    margin: 6px 0;
+    box-shadow: 0 1px 10px rgba(0,0,0,{'0.2' if mode else '0.06'});
+    border: 1px solid {border};
+}}
+
+.subject-badge {{
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}}
+
+.timer-display {{
+    font-size: 52px;
+    font-weight: 300;
+    letter-spacing: -2px;
     text-align: center;
-    font-size: 22px;
-    font-weight: 900;
+    color: {text} !important;
+    padding: 10px 0;
+}}
+
+.perfect-week {{
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white !important;
+    padding: 18px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
     margin: 12px 0;
-}
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+}}
+
+.stat-card {{
+    background: {card};
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,{'0.2' if mode else '0.06'});
+    border: 1px solid {border};
+}}
+
+.stButton > button {{
+    border-radius: 12px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    padding: 10px 20px !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,{'0.3' if mode else '0.1'}) !important;
+}}
+
+.stButton > button:hover {{
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,{'0.4' if mode else '0.15'}) !important;
+}}
+
+.stTextInput > div > div > input,
+.stNumberInput > div > div > input,
+.stSelectbox > div > div {{
+    border-radius: 12px !important;
+    border: 1px solid {border} !important;
+    background: {input_bg} !important;
+    color: {text} !important;
+    font-size: 14px !important;
+}}
+
+.stProgress > div > div > div {{
+    border-radius: 100px !important;
+}}
+
+div[data-testid="stMetricValue"] {{
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    color: {text} !important;
+}}
+
+div[data-testid="stMetricLabel"] {{
+    font-size: 12px !important;
+    color: {sub} !important;
+}}
+
+.stTabs [data-baseweb="tab-list"] {{
+    background: {card2} !important;
+    border-radius: 14px !important;
+    padding: 4px !important;
+    gap: 4px !important;
+}}
+
+.stTabs [data-baseweb="tab"] {{
+    border-radius: 10px !important;
+    color: {sub} !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}}
+
+.stTabs [aria-selected="true"] {{
+    background: {card} !important;
+    color: {text} !important;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.15) !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
 COLORS = {
     "수학": "#FF6B6B",
     "영어": "#4ECDC4",
-    "국어": "#FFE66D",
+    "국어": "#F59E0B",
     "과학": "#6BCB77",
     "사회": "#A78BFA",
     "역사": "#F9A03F",
@@ -72,14 +217,22 @@ today_tasks = [t for t in st.session_state.tasks if t["date"] == today]
 done_count = sum(1 for t in today_tasks if t["done"])
 total_count = len(today_tasks)
 
-st.markdown("# 📚 AI Study Planner")
+# ── 헤더 ─────────────────────────────────────────────────
+col_title, col_toggle = st.columns([0.8, 0.2])
+with col_title:
+    st.markdown("# 📚 AI Study Planner")
+with col_toggle:
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("🌙" if mode else "☀️", key="toggle_mode"):
+        st.session_state.dark_mode = not st.session_state.dark_mode
+        st.rerun()
+
 st.markdown("---")
 
 tab1, tab2, tab3, tab4 = st.tabs(["⏱ 타이머", "📋 할 일", "📊 주간 통계", "🤖 AI 조언"])
 
+# ── 탭1: 타이머 ──────────────────────────────────────────
 with tab1:
-    st.markdown("### 과목별 공부 비율")
-
     subject_time = {}
     for task in st.session_state.tasks:
         if task["done"]:
@@ -88,28 +241,25 @@ with tab1:
 
     if subject_time:
         import matplotlib.pyplot as plt
-        import matplotlib
         fig, ax = plt.subplots(figsize=(4, 4))
-        fig.patch.set_facecolor('#0f1117')
-        ax.set_facecolor('#0f1117')
+        fig.patch.set_facecolor(bg)
+        ax.set_facecolor(bg)
         labels = list(subject_time.keys())
         sizes = list(subject_time.values())
         colors = [COLORS.get(s, "#94A3B8") for s in labels]
-        wedges, texts, autotexts = ax.pie(
-            sizes, labels=labels, colors=colors,
-            autopct='%1.0f%%', startangle=90,
-            textprops={'color': 'white', 'fontsize': 11}
-        )
-        for at in autotexts:
-            at.set_color('white')
+        ax.pie(sizes, labels=labels, colors=colors, autopct='%1.0f%%',
+               startangle=90, textprops={'color': text, 'fontsize': 11})
         st.pyplot(fig)
         plt.close()
     else:
-        st.info("할 일을 완료하면 과목별 비율이 나와요!")
+        st.markdown(f"""
+        <div class="apple-card" style="text-align:center; padding:30px;">
+            <div style="font-size:36px">📊</div>
+            <div style="font-size:14px; color:{sub}; margin-top:8px">할 일을 완료하면 과목별 비율이 나와요!</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown("### ⏱ 공부 타이머")
-
+    st.markdown("<br>", unsafe_allow_html=True)
     timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
     if st.session_state.timer_running and st.session_state.timer_start:
@@ -117,10 +267,10 @@ with tab1:
     else:
         elapsed = st.session_state.timer_elapsed
 
-    hours = elapsed // 3600
-    minutes = (elapsed % 3600) // 60
-    seconds = elapsed % 60
-    st.markdown(f"## 🕐 {hours:02d}:{minutes:02d}:{seconds:02d}")
+    h = elapsed // 3600
+    m = (elapsed % 3600) // 60
+    s = elapsed % 60
+    st.markdown(f'<div class="timer-display">{h:02d}:{m:02d}:{s:02d}</div>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -137,7 +287,6 @@ with tab1:
                 st.session_state.timer_running = False
                 st.session_state.timer_start = None
                 st.rerun()
-
     with col2:
         if st.button("⏹ 종료", use_container_width=True, key="btn_stop"):
             if st.session_state.timer_running and st.session_state.timer_start:
@@ -154,7 +303,6 @@ with tab1:
             st.session_state.timer_start = None
             st.session_state.timer_elapsed = 0
             st.rerun()
-
     with col3:
         if st.button("🔄 리셋", use_container_width=True, key="btn_reset"):
             st.session_state.timer_running = False
@@ -162,21 +310,27 @@ with tab1:
             st.session_state.timer_elapsed = 0
             st.rerun()
 
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"**오늘 진행률: {done_count}/{total_count} 완료**")
     st.progress(done_count / total_count if total_count > 0 else 0)
 
+# ── 탭2: 할 일 ───────────────────────────────────────────
 with tab2:
     st.markdown("### 📋 오늘의 할 일")
 
     if not today_tasks:
-        st.info("오늘 할 일이 없어요. 아래에서 추가해봐요!")
+        st.markdown(f"""
+        <div class="apple-card" style="text-align:center; padding:30px;">
+            <div style="font-size:36px">📝</div>
+            <div style="font-size:14px; color:{sub}; margin-top:8px">오늘 할 일이 없어요. 아래에서 추가해봐요!</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     for i, task in enumerate(st.session_state.tasks):
         if task["date"] != today:
             continue
         color = COLORS.get(task["subject"], "#94A3B8")
-        col1, col2, col3 = st.columns([0.1, 0.7, 0.2])
+        col1, col2, col3 = st.columns([0.08, 0.72, 0.2])
         with col1:
             checked = st.checkbox("", value=task["done"], key=f"chk_{i}")
             if checked != task["done"]:
@@ -186,16 +340,12 @@ with tab2:
                 save_data()
                 st.rerun()
         with col2:
-            done_style = "opacity:0.5; text-decoration:line-through;" if task["done"] else ""
+            done_style = "opacity:0.4; text-decoration:line-through;" if task["done"] else ""
             st.markdown(f"""
-            <div style="background:#1e293b; border-radius:12px; padding:12px 16px;
-                        margin:4px 0; border-left:4px solid {color}; {done_style}">
-                <span style="background:{color}33; color:{color}; padding:2px 8px;
-                             border-radius:20px; font-size:12px; font-weight:600;">
-                    {task['subject']}
-                </span>
-                <strong style="margin-left:8px">{task['title']}</strong>
-                <span style="color:#64748b; font-size:12px"> ⏱ {task['duration']}분</span>
+            <div class="task-row" style="{done_style}">
+                <span class="subject-badge" style="background:{color}22; color:{color};">{task['subject']}</span>
+                <strong style="margin-left:8px; font-size:14px;">{task['title']}</strong>
+                <span style="color:{sub}; font-size:12px; margin-left:8px;">⏱ {task['duration']}분</span>
             </div>
             """, unsafe_allow_html=True)
         with col3:
@@ -225,6 +375,7 @@ with tab2:
         else:
             st.warning("할 일을 입력해주세요!")
 
+# ── 탭3: 주간 통계 ───────────────────────────────────────
 with tab3:
     st.markdown("### 📊 주간 통계")
 
@@ -240,7 +391,7 @@ with tab3:
         with col:
             day_tasks = [t for t in st.session_state.tasks if t["date"] == d]
             if not day_tasks:
-                color = "#334155"
+                color = border
             elif st.session_state.weekly_record.get(d):
                 color = "#22c55e"
             else:
@@ -249,16 +400,17 @@ with tab3:
             total = len(day_tasks)
             st.markdown(f"""
             <div style="text-align:center">
-                <div style="font-size:11px; color:#94a3b8; margin-bottom:4px">{name}</div>
-                <div style="background:{color}; height:80px; border-radius:8px;
+                <div style="font-size:11px; color:{sub}; margin-bottom:6px; font-weight:500;">{name}</div>
+                <div style="background:{color}; height:80px; border-radius:12px;
                             display:flex; align-items:flex-end; justify-content:center;
-                            padding-bottom:6px; font-size:11px; color:white; font-weight:700;">
+                            padding-bottom:8px; font-size:11px; color:white; font-weight:600;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                     {done}/{total}
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(f"**이번 주 완료한 날: {completed_days} / 7일**")
     st.progress(completed_days / 7)
 
@@ -301,6 +453,7 @@ with tab3:
     else:
         st.info("아직 완료한 할 일이 없어요!")
 
+# ── 탭4: AI 조언 ─────────────────────────────────────────
 with tab4:
     st.markdown("### 🤖 AI 공부 조언")
     st.info("🔑 API 키를 연결하면 AI 기능을 사용할 수 있어요!")
