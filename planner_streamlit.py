@@ -9,7 +9,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# ── 다크/라이트 모드 토글 ─────────────────────────────────
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = True
 
@@ -35,23 +34,9 @@ else:
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-* {{
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-}}
-
-.stApp {{
-    background: {bg} !important;
-}}
-
-section[data-testid="stSidebar"] {{
-    background: {card} !important;
-}}
-
-h1, h2, h3, h4, h5, p, div, span, label {{
-    color: {text} !important;
-}}
-
+* {{ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; }}
+.stApp {{ background: {bg} !important; }}
+h1, h2, h3, h4, h5, p, div, span, label {{ color: {text} !important; }}
 .apple-card {{
     background: {card};
     border-radius: 20px;
@@ -60,7 +45,6 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     box-shadow: 0 2px 20px rgba(0,0,0,{'0.3' if mode else '0.08'});
     border: 1px solid {border};
 }}
-
 .task-row {{
     background: {card};
     border-radius: 16px;
@@ -69,7 +53,6 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     box-shadow: 0 1px 10px rgba(0,0,0,{'0.2' if mode else '0.06'});
     border: 1px solid {border};
 }}
-
 .subject-badge {{
     display: inline-block;
     padding: 3px 10px;
@@ -78,7 +61,6 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     font-weight: 600;
     letter-spacing: 0.3px;
 }}
-
 .timer-display {{
     font-size: 52px;
     font-weight: 300;
@@ -87,7 +69,6 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     color: {text} !important;
     padding: 10px 0;
 }}
-
 .perfect-week {{
     background: linear-gradient(135deg, #f59e0b, #ef4444);
     color: white !important;
@@ -99,16 +80,6 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     margin: 12px 0;
     box-shadow: 0 4px 20px rgba(245,158,11,0.4);
 }}
-
-.stat-card {{
-    background: {card};
-    border-radius: 16px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,{'0.2' if mode else '0.06'});
-    border: 1px solid {border};
-}}
-
 .stButton > button {{
     border-radius: 12px !important;
     border: 1px solid {border} !important;
@@ -120,55 +91,33 @@ h1, h2, h3, h4, h5, p, div, span, label {{
     background: {card} !important;
     color: {text} !important;
 }}
-
-.stButton > button p {{
-    color: {text} !important;
-}}
-
+.stButton > button p {{ color: {text} !important; }}
 .stButton > button:hover {{
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 16px rgba(0,0,0,{'0.4' if mode else '0.15'}) !important;
 }}
-
 .stTextInput > div > div > input,
-.stNumberInput > div > div > input,
-.stSelectbox > div > div {{
+.stNumberInput > div > div > input {{
     border-radius: 12px !important;
     border: 1px solid {border} !important;
     background: {input_bg} !important;
     color: {text} !important;
-    font-size: 14px !important;
 }}
-
-.stProgress > div > div > div {{
-    border-radius: 100px !important;
-}}
-
-div[data-testid="stMetricValue"] {{
-    font-size: 24px !important;
-    font-weight: 600 !important;
-    color: {text} !important;
-}}
-
-div[data-testid="stMetricLabel"] {{
-    font-size: 12px !important;
-    color: {sub} !important;
-}}
-
+.stProgress > div > div > div {{ border-radius: 100px !important; }}
+div[data-testid="stMetricValue"] {{ font-size: 24px !important; font-weight: 600 !important; color: {text} !important; }}
+div[data-testid="stMetricLabel"] {{ font-size: 12px !important; color: {sub} !important; }}
 .stTabs [data-baseweb="tab-list"] {{
     background: {card2} !important;
     border-radius: 14px !important;
     padding: 4px !important;
     gap: 4px !important;
 }}
-
 .stTabs [data-baseweb="tab"] {{
     border-radius: 10px !important;
     color: {sub} !important;
     font-weight: 500 !important;
     font-size: 13px !important;
 }}
-
 .stTabs [aria-selected="true"] {{
     background: {card} !important;
     color: {text} !important;
@@ -223,7 +172,6 @@ today_tasks = [t for t in st.session_state.tasks if t["date"] == today]
 done_count = sum(1 for t in today_tasks if t["done"])
 total_count = len(today_tasks)
 
-# ── 헤더 ─────────────────────────────────────────────────
 col_title, col_toggle = st.columns([0.8, 0.2])
 with col_title:
     st.markdown("# 📚 AI Study Planner")
@@ -237,7 +185,6 @@ st.markdown("---")
 
 tab1, tab2, tab3, tab4 = st.tabs(["⏱ 타이머", "📋 할 일", "📊 주간 통계", "🤖 AI 조언"])
 
-# ── 탭1: 타이머 ──────────────────────────────────────────
 with tab1:
     subject_time = {}
     for task in st.session_state.tasks:
@@ -245,7 +192,7 @@ with tab1:
             s = task["subject"]
             subject_time[s] = subject_time.get(s, 0) + task["duration"]
 
-if subject_time:
+    if subject_time:
         st.markdown("### 과목별 공부 비율")
         total = sum(subject_time.values())
         for subj, mins in sorted(subject_time.items(), key=lambda x: -x[1]):
@@ -273,6 +220,9 @@ if subject_time:
             <div style="font-size:14px; color:{sub}; margin-top:8px">할 일을 완료하면 과목별 비율이 나와요!</div>
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
     if st.session_state.timer_running and st.session_state.timer_start:
         elapsed = st.session_state.timer_elapsed + (datetime.datetime.now() - st.session_state.timer_start).seconds
@@ -326,7 +276,6 @@ if subject_time:
     st.markdown(f"**오늘 진행률: {done_count}/{total_count} 완료**")
     st.progress(done_count / total_count if total_count > 0 else 0)
 
-# ── 탭2: 할 일 ───────────────────────────────────────────
 with tab2:
     st.markdown("### 📋 오늘의 할 일")
 
@@ -387,7 +336,6 @@ with tab2:
         else:
             st.warning("할 일을 입력해주세요!")
 
-# ── 탭3: 주간 통계 ───────────────────────────────────────
 with tab3:
     st.markdown("### 📊 주간 통계")
 
@@ -451,21 +399,20 @@ with tab3:
 
     st.markdown("---")
     st.markdown("### 📖 과목별 공부 시간")
-    subject_time = {}
+    subject_time2 = {}
     for task in st.session_state.tasks:
         if task["done"]:
             s = task["subject"]
-            subject_time[s] = subject_time.get(s, 0) + task["duration"]
+            subject_time2[s] = subject_time2.get(s, 0) + task["duration"]
 
-    if subject_time:
-        for subject, minutes in sorted(subject_time.items(), key=lambda x: -x[1]):
-            color = COLORS.get(subject, "#94A3B8")
-            st.markdown(f"**{subject}** — {minutes}분")
-            st.progress(minutes / max(subject_time.values()))
+    if subject_time2:
+        for subj, minutes in sorted(subject_time2.items(), key=lambda x: -x[1]):
+            color = COLORS.get(subj, "#94A3B8")
+            st.markdown(f"**{subj}** — {minutes}분")
+            st.progress(minutes / max(subject_time2.values()))
     else:
         st.info("아직 완료한 할 일이 없어요!")
 
-# ── 탭4: AI 조언 ─────────────────────────────────────────
 with tab4:
     st.markdown("### 🤖 AI 공부 조언")
     st.info("🔑 API 키를 연결하면 AI 기능을 사용할 수 있어요!")
