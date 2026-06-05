@@ -226,13 +226,24 @@ with tab1:
 
     if st.session_state.timer_running and st.session_state.timer_start:
         elapsed = st.session_state.timer_elapsed + (datetime.datetime.now() - st.session_state.timer_start).seconds
+        start_time = st.session_state.timer_start.strftime("%H:%M")
+        st.markdown(f"""
+        <div class="apple-card" style="text-align:center; padding:24px;">
+            <div style="font-size:28px;">⏱</div>
+            <div style="font-size:18px; font-weight:600; margin-top:8px; color:{text};">
+                {st.session_state.timer_subject} 공부 중...
+            </div>
+            <div style="font-size:13px; color:{sub}; margin-top:6px;">
+                시작 시간: {start_time}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         elapsed = st.session_state.timer_elapsed
-
-    h = elapsed // 3600
-    m = (elapsed % 3600) // 60
-    s = elapsed % 60
-    st.markdown(f'<div class="timer-display">{h:02d}:{m:02d}:{s:02d}</div>', unsafe_allow_html=True)
+        h = elapsed // 3600
+        m = (elapsed % 3600) // 60
+        s = elapsed % 60
+        st.markdown(f'<div class="timer-display">{h:02d}:{m:02d}:{s:02d}</div>', unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     with col1:
