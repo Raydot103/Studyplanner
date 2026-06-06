@@ -426,9 +426,9 @@ with tab3:
 
 with tab4:
     st.markdown("### 🤖 AI 공부 조언")
-    st.info("🔑 API 키를 연결하면 AI 기능을 사용할 수 있어요!")
+    st.info("🔑 OpenAI API 키를 입력하면 AI 기능을 사용할 수 있어요!")
 
-    api_key = st.text_input("Anthropic API 키 입력", type="password", placeholder="sk-ant-...", key="api_key_input")
+    api_key = st.text_input("OpenAI API 키 입력", type="password", placeholder="sk-...", key="api_key_input")
     question = st.text_area("궁금한 점을 입력하세요", placeholder="예: 오늘 공부 순서 추천해줘!", key="question_input")
 
     if st.button("🤖 AI에게 물어보기", use_container_width=True, key="btn_ask"):
@@ -438,23 +438,19 @@ with tab4:
             st.warning("질문을 입력해주세요!")
         else:
             try:
-                import anthropic
-                client = anthropic.Anthropic(api_key=api_key)
+                from openai import OpenAI
+                client = OpenAI(api_key=api_key)
                 task_list = "\n".join([f"- [{t['subject']}] {t['title']} ({t['duration']}분, {'완료' if t['done'] else '미완료'})" for t in st.session_state.tasks])
                 with st.spinner("AI가 답변 중이에요..."):
-                    message = client.messages.create(
-                        model="claude-haiku-4-5-20251001",
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
                         max_tokens=1000,
-                        messages=[{"role": "user", "content": f"""너는 친근한 공부 도우미야.
-
-현재 할 일 목록:
-{task_list if task_list else '없음'}
-
-질문: {question}
-
-짧고 실용적으로 한국어로 답해줘. 3~5문장 이내로."""}]
+                        messages=[
+                            {"role": "system", "content": "너는 친근한 공부 도우미야. 짧고 실용적으로 한국어로 답해줘. 3~5문장 이내로."},
+                            {"role": "user", "content": f"현재 할 일 목록:\n{task_list if task_list else '없음'}\n\n질문: {question}"}
+                        ]
                     )
-                st.success(message.content[0].text)
+                st.success(response.choices[0].message.content)
             except Exception as e:
                 st.error(f"오류: {e}")
 
@@ -466,24 +462,22 @@ with tab4:
             st.warning("API 키를 입력해주세요!")
         else:
             try:
-                import anthropic
-                client = anthropic.Anthropic(api_key=api_key)
+                from openai import OpenAI
+                client = OpenAI(api_key=api_key)
                 today_undone = [t for t in today_tasks if not t["done"]]
                 if not today_undone:
                     st.info("오늘 미완료 할 일이 없어요!")
                 else:
                     task_list = "\n".join([f"{i+1}. [{t['subject']}] {t['title']} ({t['duration']}분)" for i, t in enumerate(today_undone)])
                     with st.spinner("AI가 분석 중이에요..."):
-                        message = client.messages.create(
-                            model="claude-haiku-4-5-20251001",
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
                             max_tokens=1000,
-                            messages=[{"role": "user", "content": f"""학생의 오늘 할 일 목록을 보고 우선순위를 정해줘.
-
-할 일 목록:
-{task_list}
-
-각 항목에 🔴 높음 / 🟡 중간 / 🟢 낮음 으로 우선순위를 매기고 이유를 한 줄로 설명해줘."""}]
+                            messages=[
+                                {"role": "system", "content": "학생의 공부 우선순위를 정해주는 도우미야."},
+                                {"role": "user", "content": f"할 일 목록:\n{task_list}\n\n각 항목에 🔴 높음 / 🟡 중간 / 🟢 낮음 으로 우선순위를 매기고 이유를 한 줄로 설명해줘."}
+                            ]
                         )
-                    st.success(message.content[0].text)
+                    st.success(response.choices[0].message.content)
             except Exception as e:
                 st.error(f"오류: {e}")
