@@ -137,6 +137,7 @@ COLORS = {
 }
 
 DATA_FILE = "planner_data.json"
+KST = datetime.timezone(datetime.timedelta(hours=9))
 
 def load_data():
     if os.path.exists(DATA_FILE):
@@ -167,7 +168,6 @@ if "timer_elapsed" not in st.session_state:
 if "timer_subject" not in st.session_state:
     st.session_state.timer_subject = "수학"
 
-KST = datetime.timezone(datetime.timedelta(hours=9))
 now_kst = datetime.datetime.now(KST)
 today = now_kst.strftime("%Y-%m-%d")
 today_tasks = [t for t in st.session_state.tasks if t["date"] == today]
@@ -226,7 +226,7 @@ with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
-  if st.session_state.timer_running and st.session_state.timer_start:
+    if st.session_state.timer_running and st.session_state.timer_start:
         elapsed = st.session_state.timer_elapsed + (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
         start_time = st.session_state.timer_start.strftime("%H:%M")
         h = elapsed // 3600
@@ -357,7 +357,7 @@ with tab2:
 with tab3:
     st.markdown("### 📊 주간 통계")
 
-    today_date = datetime.date.today()
+    today_date = datetime.datetime.now(KST).date()
     monday = today_date - datetime.timedelta(days=today_date.weekday())
     week_days = [(monday + datetime.timedelta(days=i)).isoformat() for i in range(7)]
     day_names = ["월", "화", "수", "목", "금", "토", "일"]
@@ -402,7 +402,7 @@ with tab3:
     st.markdown("---")
     st.markdown("### ⏱ 타이머 공부 기록")
     study_time_record = st.session_state.get("study_time_record", {})
-    today_study = study_time_record.get(str(today_date), 0)
+    today_study = study_time_record.get(today, 0)
     week_total = sum(study_time_record.get(d, 0) for d in week_days)
     week_days_studied = sum(1 for d in week_days if study_time_record.get(d, 0) > 0)
     week_avg = round(week_total / week_days_studied) if week_days_studied > 0 else 0
