@@ -227,7 +227,7 @@ with tab1:
     timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
     if st.session_state.timer_running and st.session_state.timer_start:
-        elapsed = st.session_state.timer_elapsed + (datetime.datetime.now() - st.session_state.timer_start).seconds
+        elapsed = st.session_state.timer_elapsed + (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
         start_time = st.session_state.timer_start.strftime("%H:%M")
         st.markdown(f"""
         <div class="apple-card" style="text-align:center; padding:24px;">
@@ -265,7 +265,7 @@ with tab1:
     with col2:
         if st.button("⏹ 종료", use_container_width=True, key="btn_stop"):
             if st.session_state.timer_running and st.session_state.timer_start:
-                elapsed_now = (datetime.datetime.now() - st.session_state.timer_start).seconds
+                elapsed_now = (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
                 st.session_state.timer_elapsed += elapsed_now
             total_mins = round(st.session_state.timer_elapsed / 60)
             if total_mins > 0:
