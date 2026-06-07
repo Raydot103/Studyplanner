@@ -226,14 +226,19 @@ with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     timer_subject = st.selectbox("공부할 과목", list(COLORS.keys()), key="timer_subject_select")
 
-    if st.session_state.timer_running and st.session_state.timer_start:
+  if st.session_state.timer_running and st.session_state.timer_start:
         elapsed = st.session_state.timer_elapsed + (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
         start_time = st.session_state.timer_start.strftime("%H:%M")
+        h = elapsed // 3600
+        m = (elapsed % 3600) // 60
+        s = elapsed % 60
         st.markdown(f"""
         <div class="apple-card" style="text-align:center; padding:24px;">
-            <div style="font-size:28px;">⏱</div>
-            <div style="font-size:18px; font-weight:600; margin-top:8px; color:{text};">
-                {st.session_state.timer_subject} 공부 중...
+            <div style="font-size:18px; font-weight:600; color:{text};">
+                {st.session_state.timer_subject} 공부 중... ⏱
+            </div>
+            <div style="font-size:42px; font-weight:300; letter-spacing:-2px; margin-top:8px; color:{text};">
+                {h:02d}:{m:02d}:{s:02d}
             </div>
             <div style="font-size:13px; color:{sub}; margin-top:6px;">
                 시작 시간: {start_time}
