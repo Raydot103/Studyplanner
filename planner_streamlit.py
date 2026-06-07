@@ -272,13 +272,16 @@ with tab1:
             if st.session_state.timer_running and st.session_state.timer_start:
                 elapsed_now = (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
                 st.session_state.timer_elapsed += elapsed_now
-            total_mins = round(st.session_state.timer_elapsed / 60)
-            if total_mins > 0:
+            total_secs = st.session_state.timer_elapsed
+            if total_secs > 0:
                 study_record = st.session_state.get("study_time_record", {})
-                study_record[today] = study_record.get(today, 0) + total_mins
+                study_record[today] = study_record.get(today, 0) + total_secs
                 st.session_state.study_time_record = study_record
                 save_data()
-                st.success(f"🎉 {st.session_state.timer_subject} {total_mins}분 공부 완료!")
+                h = total_secs // 3600
+                m = (total_secs % 3600) // 60
+                s = total_secs % 60
+                st.success(f"🎉 {st.session_state.timer_subject} {h:02d}:{m:02d}:{s:02d} 공부 완료!")
             st.session_state.timer_running = False
             st.session_state.timer_start = None
             st.session_state.timer_elapsed = 0
@@ -407,13 +410,23 @@ with tab3:
     week_days_studied = sum(1 for d in week_days if study_time_record.get(d, 0) > 0)
     week_avg = round(week_total / week_days_studied) if week_days_studied > 0 else 0
 
+    def format_time(seconds):
+        h = seconds // 3600
+        m = (seconds % 3600) // 60
+        s = seconds % 60
+        if h > 0:
+            return f"{h}시간 {m}분 {s}초"
+        elif m > 0:
+            return f"{m}분 {s}초"
+        return f"{s}초"
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric("오늘 공부", f"{today_study}분")
+        st.metric("오늘 공부", format_time(today_study))
     with col2:
-        st.metric("이번 주 총합", f"{week_total}분")
+        st.metric("이번 주 총합", format_time(week_total))
     with col3:
-        st.metric("하루 평균", f"{week_avg}분")
+        st.metric("하루 평균", format_time(week_avg))
 
     st.markdown("---")
     st.markdown("### 📖 과목별 공부 시간")
