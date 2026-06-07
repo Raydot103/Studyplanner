@@ -167,7 +167,9 @@ if "timer_elapsed" not in st.session_state:
 if "timer_subject" not in st.session_state:
     st.session_state.timer_subject = "수학"
 
-today = str(datetime.date.today())
+KST = datetime.timezone(datetime.timedelta(hours=9))
+now_kst = datetime.datetime.now(KST)
+today = now_kst.strftime("%Y-%m-%d")
 today_tasks = [t for t in st.session_state.tasks if t["date"] == today]
 done_count = sum(1 for t in today_tasks if t["done"])
 total_count = len(today_tasks)
@@ -250,7 +252,7 @@ with tab1:
         if not st.session_state.timer_running:
             if st.button("▶ 시작", use_container_width=True, key="btn_start"):
                 st.session_state.timer_running = True
-                st.session_state.timer_start = datetime.datetime.now()
+                st.session_state.timer_start = datetime.datetime.now(KST)
                 st.session_state.timer_subject = timer_subject
                 st.rerun()
         else:
