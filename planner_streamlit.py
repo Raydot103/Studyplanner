@@ -257,7 +257,7 @@ with tab1:
                 st.rerun()
         else:
             if st.button("⏸ 일시정지", use_container_width=True, key="btn_pause"):
-                elapsed_now = (datetime.datetime.now() - st.session_state.timer_start).seconds
+                elapsed_now = (datetime.datetime.now(KST) - st.session_state.timer_start).seconds
                 st.session_state.timer_elapsed += elapsed_now
                 st.session_state.timer_running = False
                 st.session_state.timer_start = None
