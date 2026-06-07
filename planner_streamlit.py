@@ -317,8 +317,11 @@ with tab2:
             checked = st.checkbox("", value=task["done"], key=f"chk_{i}")
             if checked != task["done"]:
                 st.session_state.tasks[i]["done"] = checked
-                if all(t["done"] for t in today_tasks):
+                today_tasks_updated = [t for t in st.session_state.tasks if t["date"] == today]
+                if all(t["done"] for t in today_tasks_updated):
                     st.session_state.weekly_record[today] = True
+                else:
+                    st.session_state.weekly_record.pop(today, None)
                 save_data()
                 st.rerun()
         with col2:
